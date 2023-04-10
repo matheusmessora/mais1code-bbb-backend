@@ -1,10 +1,11 @@
 const {PrismaClient} = require('@prisma/client')
+const { body, validationResult } = require('express-validator');
 const express = require('express');
 
 const router = express.Router();
 const prisma = new PrismaClient()
 
-router.get('/participantes', async (req, res) => {
+router.get('/participantes',async (req, res) => {
     await prisma.$connect()
     const all = await prisma.participantes.findMany();
 
@@ -12,18 +13,26 @@ router.get('/participantes', async (req, res) => {
     res.status(200).json(all);
 })
 
-router.post('/participantes', async (req, res) => {
-    let {name, github_url} = req.body
-    const data = {
-        name: name,
-        github_url: github_url};
-    // VALIDACAO DE CAMPOS
-    await prisma.$connect()
-    const user = await prisma.participantes.create({
-      data: data,
-    });
+router.post('/participantes',
+    body('name').not().isEmpty(),
+    body('github_url').not().isEmpty(),
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+          return res.status(400).json({ errors: errors.array() });
+        }
 
-    res.status(201).json(user);
+        let {name, github_url} = req.body
+        const data = {
+            name: name,
+            github_url: github_url};
+        // VALIDACAO DE CAMPOS
+        await prisma.$connect()
+        const user = await prisma.participantes.create({
+          data: data,
+        });
+
+        res.status(201).json(data);
 });
 
 router.put('/participantes/:id', async (req, res) => {
