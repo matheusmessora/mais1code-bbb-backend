@@ -11,6 +11,8 @@ model participantes {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   github_url String
   name       String
+  status     String
+  created    DateTime
   updated    DateTime?
 }
 
