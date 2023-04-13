@@ -1,76 +1,49 @@
-const {PrismaClient} = require('@prisma/client')
-const { body, validationResult } = require('express-validator');
 const express = require('express');
-
 const router = express.Router();
-const prisma = new PrismaClient()
+const ParticipanteController = require('../controllers/ParticipanteController')
+const RodadasController = require('../controllers/RodadasController')
 
-// const ParticipanteController = require('../controllers/ParticipanteController')
-// router.get('/v2/participantes', ParticipanteController.getAll)
-// router.post('/v2/participantes', ParticipanteController.validateRules, ParticipanteController.post)
 
-router.get('/participantes', async (req,res) => {
-    await prisma.$connect()
-    const all = await prisma.participantes.findMany();
+router.get('/participantes', ParticipanteController.getAll)
+router.post('/participantes', ParticipanteController.validateRules, ParticipanteController.post)
+router.put('/participantes/:id', ParticipanteController.validateRules, ParticipanteController.put);
 
-    // TODO:
-    // IMPLEMENTAR o NOT FOUND
-    res.status(200).json(all);
-})
-router.post('/participantes',
-    body('name').not().isEmpty(),
-    body('github_url').not().isEmpty(),
-    async (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-          return res.status(400).json({ errors: errors.array() });
-        }
-
-        let {name, github_url} = req.body
-        const data = {
-            name: name,
-            github_url: github_url,
-            status: '',
-            created: new Date()
-        };
-        // TODO:
-        // VALIDACAO DE CAMPOS
-
-        await prisma.$connect()
-        const user = await prisma.participantes.create({
-          data: data,
-        });
-
-        res.status(201).json(user);
-});
-
-router.put('/participantes/:id', async (req, res) => {
-    const id = req.params.id;
-    let {name, github_url} = req.body
-
-    await prisma.$connect()
-    const user = await prisma.participantes.findUnique({
-      where: {
-        id: id,
-      },
-    })
-    // TODO:
-    // IMPLEMENTAR O NOT FOUND
-
-    const data = {
-        name: name,
-        github_url: github_url,
-        updated: new Date()
-    }
-
-    const updatedUser = await prisma.participantes.update({
-      where: {
-        id: user.id,
-      },
-      data: data,
-    })
-
-    res.status(200).json(updatedUser);
-});
+// router.get('/rodadas/:id', RodadasController.getByID);
+// router.put('/rodadas/:id', RodadasController.put);
 
 module.exports = router;
+
+// + Diferenca GET/POST/PUT
+// + Modelo complexo no MongoDB
+// + MVC Pattern
+// + Correta utilização do Prisma.connect()
+// + Votacao real
+
+
+// ------------------------
+// + Diferenca GET/POST/PUT
+// GET IDEMPOTENTE
+// POST CADASTRA
+// PUT CADASTRA/ALTERA
+
+// CADASTRAR USUARIO com CPF unico (POST... PUT /usuarios/400)
+// BUSCAR USUARIO -- IDEMPOTENTE GET
+// ACAO DE SOMAR 1+1=2 =2 IDEMPOTENTE
+// Botao do Elevador == IDEMPOTENTE
+// ===================
+// DELETAR UM USUARIO ==> IDEMPOTENTE
+// Gerador de numeros aleatorios ==> NAO IDEMPOTENTE
+// Embaralhar cartas ==> NAO IDEMPOTENTE
+// ACENDER UMA LUZ ==> IDEMPOTENTE
+// METODO que converte letras para maisculo ==> IDEMPOTENTE
+// "aBc".upper() ==> "ABC"
+// Passar o cartao na maquinininha ==>
+// CARTAO MESMO, VALOR EH O MESMO, SENHA
+// NAO IDEMPOTENTE: ||||
+// IDEMPOTENTE: M
+
+// Enviar EMAIL ==> POST
+
+
+
+

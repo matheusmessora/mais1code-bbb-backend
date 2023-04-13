@@ -7,16 +7,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+type RodadasVotos {
+  participante String
+  qtd          Int
+}
+
 model participantes {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  created    DateTime @db.Date
   github_url String
   name       String
   status     String
-  created    DateTime
-  updated    DateTime?
+}
+
+model rodadas {
+  id     String         @id @default(auto()) @map("_id") @db.ObjectId
+  anjo   String?
+  lider  String?
+  numero Int            @unique(map: "numero_1")
+  votos  RodadasVotos[]
+  indicacao_lider  String?
+  imunizado  String?
+  created    DateTime @db.Date
+  updated    DateTime? @db.Date
 }
 
 model teste {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  linkedin Int?
+  name     String?
 }
