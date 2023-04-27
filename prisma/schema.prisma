@@ -7,10 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-type RodadasVotos {
-  participante String
-  qtd          Int
-}
 
 model participantes {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -19,6 +15,13 @@ model participantes {
   name       String
   status     String
 }
+
+
+type RodadasVotos {
+  participante String
+  qtd          Int
+}
+
 
 model rodadas {
   id     String         @id @default(auto()) @map("_id") @db.ObjectId

@@ -7,6 +7,3 @@ app.use(express.json())
 app.use('/', routes);
 
 module.exports = app;
-
-// -- NOT FOUND
-// -- RODADAS

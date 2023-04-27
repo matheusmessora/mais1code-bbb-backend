@@ -1,6 +1,7 @@
 const {PrismaClient} = require('@prisma/client')
 const { body, validationResult } = require('express-validator');
 const express = require('express');
+const ParticipantesModel = require("../models/Participantes")
 
 const router = express.Router();
 const prisma = new PrismaClient()
@@ -19,8 +20,8 @@ const ParticipanteController = {
     validateRules: validateRules,
 
     getAll: async (req, res) => {
-        await prisma.$connect()
-        const all = await prisma.participantes.findMany();
+        params = req.params
+        const all = await ParticipantesModel.findAll()
 
         res.status(200).json(all);
     },
